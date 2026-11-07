@@ -3,32 +3,96 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Joshua Li's personal website.">
+  <meta name="theme-color" content="#d8e4e5">
+  <meta name="description" content="Joshua Li — software and systems.">
   <title>Joshua Li</title>
   <style>
-    :root { color-scheme: light dark; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { min-height: 100%; background: #d8e4e5; }
     body {
-      min-height: 100vh;
+      min-height: 100svh;
       margin: 0;
-      display: grid;
-      place-items: center;
-      padding: 2rem;
-      box-sizing: border-box;
-      background: light-dark(#f8f8f6, #161616);
-      color: light-dark(#242424, #e9e9e9);
-      font: 16px/1.5 system-ui, -apple-system, sans-serif;
+      color: #243237;
+      font: 18px/1.45 Georgia, 'Times New Roman', serif;
+      background: #d8e4e5;
+      overflow-x: hidden;
     }
-    main { width: min(100%, 28rem); }
-    h1 { margin: 0 0 0.75rem; font-size: 1.5rem; font-weight: 600; letter-spacing: -0.04em; }
-    a { color: inherit; text-underline-offset: 0.2em; }
-    a:hover { text-decoration-thickness: 2px; }
-    a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+    .atmosphere,
+    #sky {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .atmosphere {
+      background:
+        radial-gradient(ellipse 58% 34% at 78% 34%, #fff9ed 0%, #fff9edb3 35%, transparent 82%),
+        radial-gradient(ellipse 55% 29% at 14% 69%, #f8f2e8 0%, #f8f2e880 48%, transparent 90%),
+        radial-gradient(ellipse 62% 40% at 65% 105%, #e2d9ce 0%, transparent 83%),
+        linear-gradient(150deg, #c8dce3, #e2e8e3 56%, #e8dfd6);
+    }
+    #sky { opacity: 0; transition: opacity 1.5s ease; }
+    #sky.ready { opacity: 1; }
+    main {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      min-height: 100svh;
+      max-width: 34rem;
+      margin-left: clamp(1.5rem, 13vw, 13rem);
+      padding: 4rem 1.5rem 5rem 0;
+      text-shadow: 0 1px 20px #f7f6efd9;
+    }
+    h1 {
+      margin: 0 0 1rem;
+      font-size: clamp(2.7rem, 6vw, 4.75rem);
+      line-height: 1.08;
+      letter-spacing: -.065em;
+      font-weight: normal;
+    }
+    p { margin: 0 0 1.65rem; font-size: clamp(1rem, 1.7vw, 1.2rem); }
+    a {
+      color: inherit;
+      font-size: 1rem;
+      text-decoration-thickness: 1px;
+      text-underline-offset: .25em;
+      transition: text-underline-offset .2s ease;
+    }
+    a:hover { text-underline-offset: .38em; }
+    a:focus-visible { outline: 2px solid currentColor; outline-offset: 5px; }
+    @media (max-width: 560px) {
+      main { margin-left: 1.5rem; padding-right: 1.5rem; }
+      h1 { font-size: clamp(2.65rem, 12vw, 4.25rem); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #sky { transition: none; }
+      a { transition: none; }
+    }
   </style>
+  <script type="importmap">
+    {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.module.js"}}
+  </script>
 </head>
 <body>
+  <div class="atmosphere" aria-hidden="true"></div>
+  <canvas id="sky" aria-hidden="true"></canvas>
   <main>
-    <h1>Joshua Li</h1>
-    <a href="https://github.com/joshuarli" rel="me">GitHub ↗</a>
+    <h1>hi, i'm josh.</h1>
+    <p>i build software and systems.</p>
+    <a href="https://github.com/joshuarli" rel="me">github ↗</a>
   </main>
+  <script type="module">
+    // Text and CSS are fully usable without JavaScript or WebGL.
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches &&
+        !navigator.connection?.saveData) {
+      const start = () => import('./sky.js').catch(() => {});
+      if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 1500 });
+      else setTimeout(start, 750);
+    }
+  </script>
 </body>
 </html>

@@ -13,4 +13,6 @@ Minimal static-site monorepo. Each site is a separate Vercel project, connected 
 
 The `.vercel.dev` hostnames above are **requested** domains; their assignment and ownership depend on Vercel's domain restrictions. Each site has an independent `.vercel.app` deployment address when deployed.
 
-No package installation, build step, or GitHub Actions are needed. The portfolio loads pinned Three.js on idle for an optional GPU cloud effect, but its HTML and CSS work without JavaScript. Vercel's Git integration deploys `main` automatically and creates previews for other branches.
+No package installation, build step, or GitHub Actions are needed. Vercel's Git integration deploys `main` automatically and creates previews for other branches.
+
+Local preview (stdlib `python3` only): `make serve www` serves `sites/www` at `http://127.0.0.1:8000/`. Swap `www` for any entry in `sites/`; override the port with `make serve www PORT=9000`.

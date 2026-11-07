@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#d8e4e5">
   <meta name="description" content="Joshua Li — software and systems.">
   <title>Joshua Li</title>
+  <link rel="preload" as="image" href="bg-poster.jpg" type="image/jpeg">
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     html { min-height: 100%; background: #d8e4e5; }
@@ -17,23 +18,16 @@
       background: #d8e4e5;
       overflow-x: hidden;
     }
-    .atmosphere,
-    #sky {
+    .bg {
       position: fixed;
       inset: 0;
       width: 100%;
       height: 100%;
+      object-fit: cover;
+      object-position: center;
+      z-index: 0;
       pointer-events: none;
     }
-    .atmosphere {
-      background:
-        radial-gradient(ellipse 58% 34% at 78% 34%, #fff9ed 0%, #fff9edb3 35%, transparent 82%),
-        radial-gradient(ellipse 55% 29% at 14% 69%, #f8f2e8 0%, #f8f2e880 48%, transparent 90%),
-        radial-gradient(ellipse 62% 40% at 65% 105%, #e2d9ce 0%, transparent 83%),
-        linear-gradient(150deg, #c8dce3, #e2e8e3 56%, #e8dfd6);
-    }
-    #sky { opacity: 0; transition: opacity 1.5s ease; }
-    #sky.ready { opacity: 1; }
     main {
       position: relative;
       z-index: 1;
@@ -69,30 +63,39 @@
       h1 { font-size: clamp(2.65rem, 12vw, 4.25rem); }
     }
     @media (prefers-reduced-motion: reduce) {
-      #sky { transition: none; }
+      .bg { display: none; }
+      body {
+        background-image: url(bg-poster.jpg);
+        background-size: cover;
+        background-position: center;
+      }
       a { transition: none; }
     }
   </style>
-  <script type="importmap">
-    {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.module.js"}}
-  </script>
 </head>
 <body>
-  <div class="atmosphere" aria-hidden="true"></div>
-  <canvas id="sky" aria-hidden="true"></canvas>
+  <video class="bg" autoplay muted loop playsinline preload="auto" poster="bg-poster.jpg" aria-hidden="true" tabindex="-1" disablepictureinpicture>
+    <source src="bg.mp4" type="video/mp4">
+  </video>
   <main>
     <h1>hi, i'm josh.</h1>
     <p>i build software and systems.</p>
     <a href="https://github.com/joshuarli" rel="me">github ↗</a>
   </main>
-  <script type="module">
-    // Text and CSS are fully usable without JavaScript or WebGL.
-    if (!matchMedia('(prefers-reduced-motion: reduce)').matches &&
-        !navigator.connection?.saveData) {
-      const start = () => import('./sky.js').catch(() => {});
-      if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 1500 });
-      else setTimeout(start, 750);
+  <script>
+    const v = document.querySelector('.bg');
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    const conn = navigator.connection;
+    const saveData = () => conn?.saveData || ['slow-2g', '2g'].includes(conn?.effectiveType);
+    const shouldPause = () => reduced.matches || saveData();
+    if (shouldPause()) {
+      v.pause();
+      v.removeAttribute('autoplay');
     }
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) v.pause();
+      else if (!shouldPause()) v.play().catch(() => {});
+    });
   </script>
 </body>
 </html>
